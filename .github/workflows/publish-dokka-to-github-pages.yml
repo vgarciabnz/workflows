@@ -1,0 +1,70 @@
+name: Deploy Dokka Html docs to github pages
+
+on:
+  workflow_call:
+    inputs:
+      java_version:
+        description: "Java version to run gradle"
+        required: false
+        type: number
+        default: 17
+      module:
+        description: "The gradle module to build the documentation for."
+        required: false
+        type: string
+      gradle_args:
+        description: "Arguments to be passed to the gradle command line."
+        required: false
+        type: string
+        default: ""
+    secrets:
+      personal_access_token:
+        required: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Set up JDK ${{ inputs.java_version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java_version }}
+          distribution: temurin
+          cache: 'gradle'
+      - name: Change wrapper permission
+        run: chmod +x ./gradlew
+
+      - name: Build Java docs
+        run: ./gradlew :core:dokkaHtml ${{ inputs.gradle_args }}
+
+      - name: Organize pages structure
+        run: |
+          mkdir _site && mkdir _site/api
+          cp -r core/build/dokka/html/* _site/api
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
