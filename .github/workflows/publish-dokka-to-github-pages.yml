@@ -4,12 +4,12 @@ on:
   workflow_call:
     inputs:
       java_version:
-        description: "Java version to run gradle"
+        description: "Java version to run gradle."
         required: false
         type: number
         default: 17
       gradle_module:
-        description: "The gradle module to build the documentation for."
+        description: "The gradle module to build the documentation."
         required: false
         type: string
       gradle_args:
@@ -18,7 +18,7 @@ on:
         type: string
         default: ""
       output_folder:
-        description: "The output folder to send the generated docs."
+        description: "The folder in github pages to upload the docs."
         required: false
         type: string
         default: ""
@@ -50,13 +50,14 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Java docs
-        run: ./gradlew dokkaHtml ${{ inputs.gradle_args }}
+        run: ./gradlew ${{ inputs.gradle_module }}:dokkaHtml ${{ inputs.gradle_args }}
 
       - name: Organize pages structure
         run: |
+          if [ -z ${{ inputs.gradle_module }} ]; then BUILD_SUBFOLDER=""; else BUILD_SUBFOLDER="${{ inputs.gradle_module }}/"; fi
           OUTPUT_DIR=_site/${{ inputs.output_folder }}
           mkdir -p $OUTPUT_DIR
-          cp -r build/dokka/html/* $OUTPUT_DIR
+          cp -r ${BUILD_SUBFOLDER}build/dokka/html/* $OUTPUT_DIR
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
