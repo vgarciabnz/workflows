@@ -8,12 +8,17 @@ on:
         required: false
         type: number
         default: 17
-      module:
+      gradle_module:
         description: "The gradle module to build the documentation for."
         required: false
         type: string
       gradle_args:
         description: "Arguments to be passed to the gradle command line."
+        required: false
+        type: string
+        default: ""
+      output_folder:
+        description: "The output folder to send the generated docs."
         required: false
         type: string
         default: ""
@@ -49,8 +54,8 @@ jobs:
 
       - name: Organize pages structure
         run: |
-          mkdir _site && mkdir _site/api
-          cp -r build/dokka/html/* _site/api
+          mkdir -p _site/${{ inputs.output_folder }}
+          cp -r build/dokka/html/* _site/${{ inputs.output_folder }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -58,7 +63,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}/${{ inputs.output_folder }}
     runs-on: ubuntu-latest
     needs: build
     steps:
