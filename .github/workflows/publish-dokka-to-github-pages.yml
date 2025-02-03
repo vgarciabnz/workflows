@@ -48,12 +48,12 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Java docs
-        run: ./gradlew :core:dokkaHtml ${{ inputs.gradle_args }}
+        run: ./gradlew dokkaHtml ${{ inputs.gradle_args }}
 
       - name: Organize pages structure
         run: |
           mkdir _site && mkdir _site/api
-          cp -r core/build/dokka/html/* _site/api
+          cp -r build/dokka/html/* _site/api
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
