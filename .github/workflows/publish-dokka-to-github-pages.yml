@@ -54,8 +54,9 @@ jobs:
 
       - name: Organize pages structure
         run: |
-          mkdir -p _site/${{ inputs.output_folder }}
-          cp -r build/dokka/html/* _site/${{ inputs.output_folder }}
+          OUTPUT_DIR=_site/${{ inputs.output_folder }}
+          mkdir -p $OUTPUT_DIR
+          cp -r build/dokka/html/* $OUTPUT_DIR
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -63,7 +64,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}/${{ inputs.output_folder }}
+      url: ${{ steps.deployment.outputs.page_url }}${{ inputs.output_folder }}
     runs-on: ubuntu-latest
     needs: build
     steps:
