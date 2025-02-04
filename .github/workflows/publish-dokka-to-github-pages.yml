@@ -1,5 +1,14 @@
 name: Deploy Dokka Html docs to github pages
 
+#
+# This workflow automates the build and deployment of API documentation in Github pages.
+#
+# Requirements:
+# - The project must use Gradle as build system.
+# - The project must use Dokka as API documentation engine.
+# - In Github > Settings > Pages, the source must be configured to "Github actions".
+# - In Github > Settings > Environments, the running branch must be allowed to deploy to "github-pages" environment.
+
 on:
   workflow_call:
     inputs:
@@ -8,17 +17,17 @@ on:
         required: false
         type: number
         default: 17
-      gradle_module:
-        description: "The gradle module to build the documentation."
-        required: false
-        type: string
       gradle_args:
         description: "Arguments to be passed to the gradle command line."
         required: false
         type: string
         default: ""
+      gradle_module:
+        description: "The gradle module to build the documentation. Leave blank for root."
+        required: false
+        type: string
       output_folder:
-        description: "The folder in github pages to upload the docs."
+        description: "The folder in github pages to upload the docs. Leave blank for root."
         required: false
         type: string
         default: ""
@@ -26,7 +35,6 @@ on:
 permissions:
   contents: read
   pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
