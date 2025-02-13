@@ -42,6 +42,6 @@ jobs:
       - name: Get version
         id: getVersion
         run: |
-          version_line=$(./gradlew ${{ inputs.gradle_module }}:properties ${{ inputs.gradle_args }} | grep -P "version:"
+          version_line=$(./gradlew ${{ inputs.gradle_module }}:properties ${{ inputs.gradle_args }} | grep -P "version:")
           version=$(echo $version_line | awk -F"version: " '{ print $2}')
           echo "version=$version" >> $GITHUB_OUTPUT
