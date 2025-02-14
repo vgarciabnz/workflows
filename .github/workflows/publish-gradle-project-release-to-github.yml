@@ -20,7 +20,7 @@ on:
 
 jobs:
   get_version:
-    uses: .github/workflows/get-gradle-project-version.yml
+    uses: ./.github/workflows/get-gradle-project-version.yml
     with:
       java_version: ${{ inputs.java_version }}
       gradle_args: ${{ inputs.gradle_args }}
