@@ -1,4 +1,4 @@
-name: Get project version from Gradle
+name: Publish Gradle-based project release to GitHub
 
 on:
   workflow_call:
